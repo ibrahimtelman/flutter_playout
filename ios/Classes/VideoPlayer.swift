@@ -73,6 +73,7 @@ class VideoPlayer: NSObject, FlutterPlugin, FlutterStreamHandler, FlutterPlatfor
     var isLiveStream:Bool = false
     var showControls:Bool = false
     var position:Double = 0.0
+    var httpHeaders: [String: String]?
 
     private var mediaDuration = 0.0
 
@@ -123,6 +124,10 @@ class VideoPlayer: NSObject, FlutterPlugin, FlutterStreamHandler, FlutterPlatfor
         self.showControls = parsedData["showControls"] as! Bool
         self.position = parsedData["position"] as! Double
 
+        if(parsedData["httpHeaders"] != nil) {
+            self.httpHeaders = parsedData["httpHeaders"] as! [String: String]?
+        }
+
         setupPlayer()
     }
 
@@ -157,6 +162,10 @@ class VideoPlayer: NSObject, FlutterPlugin, FlutterStreamHandler, FlutterPlatfor
                 self.isLiveStream = parsedData["isLiveStream"] as! Bool
                 self.showControls = parsedData["showControls"] as! Bool
                 self.position = parsedData["position"] as! Double
+                
+                if(parsedData["httpHeaders"] != nil) {
+                    self.httpHeaders = parsedData["httpHeaders"] as! [String: String]?
+                }
 
                 self.onMediaChanged()
 
@@ -218,7 +227,11 @@ class VideoPlayer: NSObject, FlutterPlugin, FlutterStreamHandler, FlutterPlatfor
             } catch _ { }
 
             /* Create the asset to play */
-            let asset = AVAsset(url: videoURL)
+            var asset = AVAsset(url: videoURL)
+
+            if(self.httpHeaders != nil){
+                asset = AVURLAsset(url: videoURL, options: ["AVURLAssetHTTPHeaderFieldsKey": self.httpHeaders])
+            }
 
             if (asset.isPlayable) {
                 /* Create a new AVPlayerItem with the asset and

@@ -38,23 +38,25 @@ class Video extends StatefulWidget {
   final double position;
   final Function? onViewCreated;
   final PlayerState desiredState;
+  final Map<String, dynamic>? httpHeaders;
 
-  const Video(
-      {Key? key,
-      this.autoPlay = false,
-      this.loop = false,
-      this.showControls = true,
-      this.url,
-      this.title = "",
-      this.subtitle = "",
-      this.preferredAudioLanguage = "mul",
-      this.preferredTextLanguage = "",
-      this.isLiveStream = false,
-      this.position = -1,
-      this.onViewCreated,
-      this.desiredState = PlayerState.PLAYING,
-      this.textTracks})
-      : super(key: key);
+  const Video({
+    Key? key,
+    this.autoPlay = false,
+    this.loop = false,
+    this.showControls = true,
+    this.url,
+    this.title = "",
+    this.subtitle = "",
+    this.preferredAudioLanguage = "mul",
+    this.preferredTextLanguage = "",
+    this.isLiveStream = false,
+    this.position = -1,
+    this.onViewCreated,
+    this.desiredState = PlayerState.PLAYING,
+    this.textTracks,
+    this.httpHeaders,
+  }) : super(key: key);
 
   @override
   _VideoState createState() => _VideoState();
@@ -127,6 +129,7 @@ class _VideoState extends State<Video> {
             "preferredAudioLanguage": widget.preferredAudioLanguage ?? "mul",
             "isLiveStream": widget.isLiveStream,
             "position": widget.position,
+            "httpHeaders": widget.httpHeaders,
           },
           creationParamsCodec: const JSONMessageCodec(),
           onPlatformViewCreated: (viewId) {
@@ -258,6 +261,7 @@ class _VideoState extends State<Video> {
           "subtitle": widget.subtitle,
           "isLiveStream": widget.isLiveStream,
           "showControls": widget.showControls,
+          "httpHeaders": widget.httpHeaders,
         });
       }
     }
